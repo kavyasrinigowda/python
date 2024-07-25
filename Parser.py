@@ -1,15 +1,22 @@
 def parse_properties_file(properties, xml_files):
     problems = []
     missing_properties = []
+    new_properties = {}
 
     for key, value in properties.items():
         if '$' in value:
-            xml_key = value.strip('$')
-            xml_value = xml_files.get_value_from_xml(xml_key)
+            xml_value = None
+            for xml_file in xml_files.values():
+                xml_value = xml_file.findtext(value.strip('$'))
+                if xml_value:
+                    break
+
             if xml_value:
                 properties[key] = xml_value
             else:
-                problems.append(f"Reference {xml_key} not found in XML files")
+                problems.append(f"Missing value for key '{key}' in XML files")
                 missing_properties.append(key)
-
-    return problems, missing_properties
+        else:
+            new_properties[key] = value
+    
+    return properties, missing_properties, new_properties
