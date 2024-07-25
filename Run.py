@@ -1,15 +1,15 @@
 import argparse
-from src.utils import load_xml_files, process_properties_file, write_processed_properties_file
-from src.parser import find_problems  # Assuming this function is defined in parser.py
+from src.utils import load_xml_files, resolve_properties_placeholders, write_processed_properties_file
+from src.parser import find_problems
 
 def read_properties_file(properties_file, xml_files):
     # Process the properties file to resolve placeholders
-    processed_lines = process_properties_file(properties_file, xml_files)
-    return processed_lines
+    resolved_key_value_pairs = resolve_properties_placeholders(properties_file, xml_files)
+    return resolved_key_value_pairs
 
-def find_and_report_problems(processed_lines):
-    # Find problems in the processed lines
-    problems = find_problems(processed_lines)
+def find_and_report_problems(resolved_key_value_pairs):
+    # Find problems in the key-value pairs
+    problems = find_problems(resolved_key_value_pairs)
     if problems:
         print("Problems found:")
         for problem in problems:
@@ -41,18 +41,18 @@ def main():
     xml_files = load_xml_files(xml_file_paths)
     
     # Read and process properties file
-    processed_lines = read_properties_file(args.properties_file, xml_files)
+    resolved_key_value_pairs = read_properties_file(args.properties_file, xml_files)
     
     # Find and report problems
-    find_and_report_problems(processed_lines)
+    find_and_report_problems(resolved_key_value_pairs)
     
     # Output mode handling
     if args.output_mode == 1:
-        for line in processed_lines:
-            print(line, end='')
+        for key, value in resolved_key_value_pairs.items():
+            print(f"{key}={value}")
     elif args.output_mode == 2:
         output_file = f"{args.properties_file.replace('.properties', '_output.properties')}"
-        write_processed_properties_file(output_file, processed_lines)
+        write_processed_properties_file(output_file, resolved_key_value_pairs)
         print(f"Output written to {output_file}")
     else:
         print("Invalid output mode. Use 1 for console or 2 for file.")
