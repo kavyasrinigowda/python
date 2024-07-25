@@ -1,4 +1,6 @@
 import argparse
+import os  # Ensure os module is imported
+import xml.etree.ElementTree as ET
 from src.config import read_properties_file, load_xml_files
 from src.parser import parse_properties_file
 from src.utils import output_mode, log_missing_properties
