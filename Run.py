@@ -1,5 +1,5 @@
 import argparse
-import os  # Ensure os module is imported
+import os
 import xml.etree.ElementTree as ET
 from src.config import read_properties_file, load_xml_files
 from src.parser import parse_properties_file
@@ -39,8 +39,10 @@ def main(application_properties_file, environment_properties_file, xml_files_dir
         print(f"Problem 2: Parsing error - {e}")
     except KeyError as e:
         print(f"Problem 3: Missing reference - {e}")
+    except OSError as e:
+        print(f"Problem 4: Output logic error related to OS - {e}")
     except Exception as e:
-        print(f"Problem 4: Output logic error - {e}")
+        print(f"Problem 5: General error - {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process properties and XML files.")
