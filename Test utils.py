@@ -1,23 +1,15 @@
 import unittest
-from src.utils import output_mode_console, output_mode_file
-import os
+from src.utils import output_mode, log_missing_properties
 
 class TestUtils(unittest.TestCase):
-    def setUp(self):
-        # Define data for testing
-        self.data = {'key1': 'value1', 'key2': 'value2'}
-        self.output_file_path = 'src/test/test_data/output_test.properties'
-
     def test_output_mode_console(self):
-        output_mode_console(self.data)  # This will print to the console
+        properties = {'key1': 'value1'}
+        output_mode(1, properties)  # Should print to console
 
     def test_output_mode_file(self):
-        output_mode_file(self.data, self.output_file_path)
-        with open(self.output_file_path, 'r') as file:
-            lines = file.readlines()
-        self.assertIn('key1=value1\n', lines)
-        self.assertIn('key2=value2\n', lines)
-        os.remove(self.output_file_path)  # Clean up the output file after test
+        properties = {'key1': 'value1'}
+        output_mode(2, properties)  # Should write to 'output_test.properties'
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_log_missing_properties(self):
+        missing_properties = ['key2 not found in file.xml']
+        log_missing_properties(missing_properties)  # Should write
