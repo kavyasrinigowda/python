@@ -48,6 +48,6 @@ if __name__ == "__main__":
     parser.add_argument('environment_properties_file', type=str, help='Path to the environment properties file')
     parser.add_argument('xml_files_directory', type=str, help='Directory containing XML files')
     parser.add_argument('output_mode', type=int, choices=[1, 2], help='Output mode: 1 for console, 2 for file')
-
+    
     args = parser.parse_args()
     main(args.application_properties_file, args.environment_properties_file, args.xml_files_directory, args.output_mode)
