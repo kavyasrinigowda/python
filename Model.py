@@ -1,14 +1,27 @@
+import os
 import xml.etree.ElementTree as ET
 
 class Model:
     def __init__(self, application_properties_file, xml_files_directory):
         self.application_properties_file = application_properties_file
-        self.xml_files = self._load_xml_files(xml_files_directory)
+        self.xml_files_directory = xml_files_directory
+        self.xml_files = self.load_xml_files()
 
-    def _load_xml_files(self, directory_path):
+    def load_xml_files(self):
         xml_files = {}
-        for file_name in os.listdir(directory_path):
-            if file_name.endswith('.xml'):
-                tree = ET.parse(os.path.join(directory_path, file_name))
-                xml_files[file_name] = tree.getroot()
+        for filename in os.listdir(self.xml_files_directory):
+            if filename.endswith(".xml"):
+                file_path = os.path.join(self.xml_files_directory, filename)
+                try:
+                    tree = ET.parse(file_path)
+                    xml_files[filename] = tree.getroot()
+                except ET.ParseError:
+                    print(f"Error parsing XML file: {file_path}")
         return xml_files
+
+    def get_value_from_xml(self, key):
+        for filename, root in self.xml_files.items():
+            for elem in root.iter():
+                if elem.tag == key:
+                    return elem.text
+        return None
