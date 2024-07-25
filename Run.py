@@ -1,61 +1,40 @@
 import argparse
-from src.utils import load_xml_files, resolve_properties_placeholders, write_processed_properties_file
-from src.parser import find_problems
+from src.config import read_properties_file, load_xml_files
+from src.parser import parse_properties_file
+from src.utils import output_mode
+from src.model import Model
 
-def read_properties_file(properties_file, xml_files):
-    # Process the properties file to resolve placeholders
-    resolved_key_value_pairs = resolve_properties_placeholders(properties_file, xml_files)
-    return resolved_key_value_pairs
-
-def find_and_report_problems(resolved_key_value_pairs):
-    # Find problems in the key-value pairs
-    problems = find_problems(resolved_key_value_pairs)
+def main(application_properties_file, environment_properties_file, xml_files_directory, output_mode_value):
+    # Read properties from files
+    application_properties = read_properties_file(application_properties_file)
+    environment_properties = read_properties_file(environment_properties_file)
+    
+    # Initialize the model
+    model = Model(application_properties_file, xml_files_directory)
+    
+    # Combine properties
+    combined_properties = {**environment_properties, **application_properties}
+    
+    # Parse properties file and get problems
+    problems = parse_properties_file(application_properties, model.xml_files)
+    
+    # Check and print problems
     if problems:
         print("Problems found:")
         for problem in problems:
             print(f" - {problem}")
     else:
-        print("No problems found")
+        print("No problems found.")
+    
+    # Output results based on mode
+    output_mode(output_mode_value, combined_properties)
 
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process properties and XML files.")
-    parser.add_argument('properties_file', help="Path to the properties file")
-    parser.add_argument('xml_files_directory', help="Directory containing XML files")
-    parser.add_argument('output_mode', type=int, help="Output mode: 1 for console, 2 for file")
-
+    parser.add_argument('application_properties_file', type=str, help='Path to the application properties file')
+    parser.add_argument('environment_properties_file', type=str, help='Path to the environment properties file')
+    parser.add_argument('xml_files_directory', type=str, help='Directory containing XML files')
+    parser.add_argument('output_mode', type=int, choices=[1, 2], help='Output mode: 1 for console, 2 for file')
+    
     args = parser.parse_args()
-
-    # Define XML file names dynamically based on the directory
-    xml_file_names = [
-        'cbc-osb-common.xml',
-        'cbc-osb-dev-tire.xml',
-        'cbc-osb-dev01.xml',
-        'cbc-service-cbc-osb-common.xml',
-        'cbc-service-cbc-osb-dev-tire.xml',
-        'cbc-service-cbc-osb-dev01.xml'
-    ]
-    
-    xml_file_paths = [f"{args.xml_files_directory}/{name}" for name in xml_file_names]
-    
-    # Load XML files
-    xml_files = load_xml_files(xml_file_paths)
-    
-    # Read and process properties file
-    resolved_key_value_pairs = read_properties_file(args.properties_file, xml_files)
-    
-    # Find and report problems
-    find_and_report_problems(resolved_key_value_pairs)
-    
-    # Output mode handling
-    if args.output_mode == 1:
-        for key, value in resolved_key_value_pairs.items():
-            print(f"{key}={value}")
-    elif args.output_mode == 2:
-        output_file = f"{args.properties_file.replace('.properties', '_output.properties')}"
-        write_processed_properties_file(output_file, resolved_key_value_pairs)
-        print(f"Output written to {output_file}")
-    else:
-        print("Invalid output mode. Use 1 for console or 2 for file.")
-
-if __name__ == '__main__':
-    main()
+    main(args.application_properties_file, args.environment_properties_file, args.xml_files_directory, args.output_mode)
