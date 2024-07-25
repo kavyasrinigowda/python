@@ -1,18 +1,10 @@
 import unittest
-from src.model import get_key_value_pairs
+from src.model import Model
 
 class TestModel(unittest.TestCase):
-    def setUp(self):
-        # Define properties for testing
-        self.properties = {
-            'key1': 'value1',
-            'key2': 'value2'
-        }
-
-    def test_get_key_value_pairs(self):
-        key_value_pairs = get_key_value_pairs(self.properties)
-        self.assertEqual(key_value_pairs['key1'], 'value1')
-        self.assertEqual(key_value_pairs['key2'], 'value2')
+    def test_load_xml_files(self):
+        model = Model('src/test/test_data/')
+        self.assertGreater(len(model.xml_files), 0)  # Ensure XML files are loaded
 
 if __name__ == '__main__':
     unittest.main()
