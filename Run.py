@@ -39,6 +39,8 @@ def main(application_properties_file, environment_properties_file, xml_files_dir
         print(f"Problem 2: Parsing error - {e}")
     except KeyError as e:
         print(f"Problem 3: Missing reference - {e}")
+    except ValueError as e:
+        print(f"Problem 4: Output logic error - {e}")
     except Exception as e:
         print(f"Problem 4: Output logic error - {e}")
 
