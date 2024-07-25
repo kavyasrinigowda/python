@@ -1,5 +1,6 @@
 def parse_properties_file(properties, xml_files):
     problems = []
+    missing_properties = {}
     for key, value in properties.items():
         if value.startswith('${'):
             ref_key = value[2:-1]  # Extract the key within ${}
@@ -13,4 +14,5 @@ def parse_properties_file(properties, xml_files):
                     break
             if not found:
                 problems.append(f"Key '{key}' references non-existent XML value '{ref_key}'")
-    return problems
+                missing_properties[key] = value
+    return problems, missing_properties
