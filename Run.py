@@ -1,7 +1,7 @@
 import argparse
 from src.config import read_properties_file, load_xml_files
 from src.parser import parse_properties_file
-from src.utils import output_mode
+from src.utils import output_mode, log_missing_properties
 from src.model import Model
 
 def main(application_properties_file, environment_properties_file, xml_files_directory, output_mode_value):
@@ -17,13 +17,14 @@ def main(application_properties_file, environment_properties_file, xml_files_dir
         combined_properties = {**environment_properties, **application_properties}
 
         # Parse properties file and get problems
-        problems = parse_properties_file(combined_properties, model.xml_files)
+        problems, missing_properties = parse_properties_file(combined_properties, model.xml_files)
 
         # Check and print problems
         if problems:
             print("Problems found:")
             for problem in problems:
                 print(f" - {problem}")
+            log_missing_properties(missing_properties)
         else:
             print("No problems found.")
 
