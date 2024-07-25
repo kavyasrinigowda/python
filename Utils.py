@@ -12,7 +12,7 @@ def output_mode(mode, properties):
             for key, value in properties.items():
                 file.write(f"{key}={value}\n")
     else:
-        raise ValueError("Invalid output mode")
+        raise ValueError("Invalid output mode specified. Use 1 for console or 2 for file.")
 
 def log_missing_properties(missing_properties):
     if missing_properties:
