@@ -1,21 +1,19 @@
+import os  # Ensure os module is imported
+
 def output_mode(mode, properties):
     if mode == 1:
         # Print to console
         for key, value in properties.items():
             print(f"{key}: {value}")
     elif mode == 2:
-        # Write to properties file
-        try:
-            with open('output_properties.properties', 'w') as f:
-                for key, value in properties.items():
-                    f.write(f"{key}={value}\n")
-        except Exception as e:
-            raise Exception(f"Error writing to properties file: {e}")
+        # Output to file
+        output_file_path = os.path.join('src', 'test', 'test_data', 'output_test.properties')
+        with open(output_file_path, 'w') as file:
+            for key, value in properties.items():
+                file.write(f"{key}={value}\n")
 
 def log_missing_properties(missing_properties):
-    try:
-        with open('properties_not_found.properties', 'w') as f:
-            for key, value in missing_properties.items():
-                f.write(f"{key}={value}\n")
-    except Exception as e:
-        raise Exception(f"Error writing to properties not found file: {e}")
+    log_file_path = os.path.join('src', 'test', 'test_data', 'missing_properties.log')
+    with open(log_file_path, 'w') as file:
+        for prop in missing_properties:
+            file.write(f"Missing property: {prop}\n")
